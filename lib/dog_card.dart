@@ -18,7 +18,6 @@ class DogCard extends StatefulWidget {
 }
 
 class _DogCardState extends State<DogCard> {
-
   Dog dog;
 
   _DogCardState(this.dog);
@@ -28,7 +27,8 @@ class _DogCardState extends State<DogCard> {
   //   return Text(widget.dog.name);
   // }
 
-  String renderUrl; // A class property that represents the URL flutter will render from the Dog class.
+  String
+      renderUrl; // A class property that represents the URL flutter will render from the Dog class.
 
   Widget get dogImage {
     return Container(
@@ -78,16 +78,63 @@ class _DogCardState extends State<DogCard> {
   @override
   Widget build(BuildContext context) {
     // Start with a container so we can add layout and style properties.
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        // Arbitrary number
+        height: 115.0,
+        child: Stack(
+          children: <Widget>[
+            // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
+            Positioned(
+              left: 50.0,
+              child: dogCard,
+            ),
+            Positioned(top: 7.5, child: dogImage),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget get dogCard {
     return Container(
-      // Arbitrary number
+      width: 290.0,
       height: 115.0,
-      child: Stack(
-        children: <Widget>[
-          // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
-          Positioned(
-            child: dogImage,
-          )
-        ],
+      child: Card(
+        color: Colors.black87,
+        // Wrap children in a Padding widget in order to give padding
+        child: Padding(
+          // The class that controls padding is called 'EdgeInsets'
+          // The EdgeInsets.only constructor is used to set padding explicitly to each side of the child
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            bottom: 8.0,
+            left: 64.0,
+          ),
+          // Column is another layout widget (like stack) that
+          // takes a list of widgets as children, and lays the
+          // widget out from top to bottom.
+          child: Column(
+            // These alignment properties function exactly like CSS flexbox properties
+            // The main axis of a colum is the vertical axis,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text(widget.dog.name,
+                  // Themes are set in the MaterialApp widget at the root of your app.
+                  // The have default values
+                  // Useful for having consistent, app-wide styling that's easily changed
+                  style: Theme.of(context).textTheme.subhead),
+              Row(
+                children: <Widget>[
+                  Icon(Icons.star),
+                  Text(': ${widget.dog.rating} / 10')
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
