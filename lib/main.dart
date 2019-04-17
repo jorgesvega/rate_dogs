@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dog_model.dart';
 import 'dog_card.dart';
+import 'dog_list.dart';
 
 void main() => runApp(MyApp());
 
@@ -40,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    /*
+    /*∫
     Scaffold is the base for a page. It gives an AppBar for the top, Space for the main body, bottom navigation and more.
     */
 
@@ -50,7 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.black87,
       ),
       body: Container(
-        child: DogCard(initialDoggos[1]),
+        child: Center(
+          child: DogList(initialDoggos),
+        ),
       ),
     );
   }
