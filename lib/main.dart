@@ -51,6 +51,22 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.black87,
       ),
       body: Container(
+        decoration: BoxDecoration(
+          // BoxDecoration takes a gradient
+          gradient: LinearGradient(
+            // Where the linear gradient begins and ends
+            begin: Alignment.topRight,
+            end: Alignment.topLeft,
+            // And one stop for each color. Stops should increase from 0 to 1.
+            stops: [0.1, 0.5, 0.7, 0.9],
+            colors: [
+              Colors.indigo[800],
+              Colors.indigo[700],
+              Colors.indigo[600],
+              Colors.indigo[400],
+            ],
+          ),
+        ),
         child: Center(
           child: DogList(initialDoggos),
         ),
