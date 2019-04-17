@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dog_model.dart';
+import 'dog_detail_page.dart';
 
 /*
 NOTES
@@ -78,23 +79,49 @@ class _DogCardState extends State<DogCard> {
   @override
   Widget build(BuildContext context) {
     // Start with a container so we can add layout and style properties.
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        // Arbitrary number
-        height: 115.0,
-        child: Stack(
-          children: <Widget>[
-            // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
-            Positioned(
-              left: 50.0,
-              child: dogCard,
-            ),
-            Positioned(top: 7.5, child: dogImage),
-          ],
+    // InkWell is a special material widget that makes its children tapable and adds Material Design ink ripple when tapped
+    return InkWell(
+      // onTap is a callback that will be triggered when tapped
+      onTap: showDogDetailPage,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Container(
+          // Arbitrary number
+          height: 115.0,
+          child: Stack(
+            children: <Widget>[
+              // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
+              Positioned(
+                left: 50.0,
+                child: dogCard,
+              ),
+              Positioned(top: 7.5, child: dogImage),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  // This is the builder method that creates a new page
+  showDogDetailPage() {
+    // Navigator.of(context) accesses the current app¡s navigator
+    // Navigators can 'push' new routes onto the stack
+    // as well as pop routes off the stack
+    // Easiest way and pass that page some state from the current page
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        // builder method always take context
+        builder: (context) {
+          return DogDetailPage(dog);
+        }
+      )
+    );
+
+    /*
+    Flutter automatically adds a leading button to an AppBar, which pops a route off. 
+    You can override it in the AppBar widget if you ever need to.
+    */
   }
 
   Widget get dogCard {
