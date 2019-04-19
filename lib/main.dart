@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dog_model.dart';
 import 'dog_card.dart';
 import 'dog_list.dart';
+import 'new_dog_form.dart';
 
 void main() => runApp(MyApp());
 
@@ -49,6 +50,13 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.black87,
+        // This is how you add new buttons to the top right of a material appBar
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _showNewDogForm,
+          )
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -72,5 +80,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  // Any time you're pushing a new route and expect that route to return something back to you,
+  // you need to use an async function.
+  // In this case, the function will create a form page, which the user can fill out and summit.
+  // On submission, the information in that form page will be passed back to this function
+  Future _showNewDogForm() async {
+    // push a new route like you did before
+    Dog newDog = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return AddDogFormPage();
+        }
+      )
+    );
+    // a null check, to make sure that the user didn't abandom the form
+    if (newDog != null) {
+      // add a newDog to our mock dog array
+      initialDoggos.add(newDog);
+    }
   }
 }
