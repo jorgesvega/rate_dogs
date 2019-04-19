@@ -18,7 +18,18 @@ class _AddDogFormPageState extends State<AddDogFormPage> {
     // A dog needs a name, but may be location independent,
     // so we'll only abandon the save if there's no name
     if (nameController.text.isEmpty) {
-      print('Dogs need names');
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Pup need names!'),
+          /*
+          In the build method on this page, the RaisedButton is wrapped in a Builder. 
+          A builder creates a new scaffold under the hood. It's a new page, a new BuildContext, etc.
+          This new scaffold is necessary to show Snackbars (aka toasts on the web) because they are an element that is on another page, waiting to be called like any page would be.
+          The better way to do this would be to make a whole new stateless widget that's just a RaisedButton that shows a Snackbar on pressed.
+          */
+        )
+      );
     } else {
       // Create a new dog with the information from the form
       var newDog = Dog(nameController.text, locationController.text,

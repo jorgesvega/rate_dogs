@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
 import 'dog_model.dart';
 import 'dog_detail_page.dart';
+import 'package:flutter/scheduler.dart';
 
 /*
 NOTES
-
 Passing data to a Stateful Widget: https://stackoverflow.com/questions/50818770/passing-data-to-a-stateful-widget
-
 */
+
+@override
+Widget build(BuildContext context) {
+  timeDilation = 1.5;
+  // Start with a container so we can add layout and style properties.
+  // InkWell is a special material widget that makes its children tapable and adds Material Design ink ripple when tapped
+  return InkWell(
+    // onTap is a callback that will be triggered when tapped
+    onTap: showDogDetailPage,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        // Arbitrary number
+        height: 115.0,
+        child: Stack(
+          children: <Widget>[
+            // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
+            Positioned(
+              left: 50.0,
+              child: dogCard,
+            ),
+            Positioned(top: 7.5, child: dogImage),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 
 class DogCard extends StatefulWidget {
   final Dog dog;
-
   DogCard(this.dog);
 
   @override
@@ -23,34 +49,59 @@ class _DogCardState extends State<DogCard> {
 
   _DogCardState(this.dog);
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Text(widget.dog.name);
-  // }
-
   String
       renderUrl; // A class property that represents the URL flutter will render from the Dog class.
 
   Widget get dogImage {
-    return Container(
-      width: 100.0,
-      height: 100,
-      /*
-      Decoration is a property that lets you style the container. It expects a BoxDecoration.
-      */
-      decoration: BoxDecoration(
-        /*
-        Decoration have many possible properties. Using BoxShape with a background iage is the easiest way to make a circle cropped avatar style image.
-        */
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          /*
-          A NetworkImage widget is a widget that takes a URL to an image. ImageProviders are ideal when your image needs to be loaded or can change. Use the null check to avoid an error.
-          */
-          image: NetworkImage(renderUrl ?? ''),
+    // Wrap the dogAvatar widget in a Hero widget
+    var dogAvatar = Hero(
+      // Give your hero a tag
+      // Flutter looks for two widgets on two different pages
+      // and if the have the same tag it animates between them
+      tag: dog,
+      child: Container(
+        width: 100.0,
+        height: 100.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkImage(renderUrl ?? ''),
+          ),
         ),
       ),
+    );
+
+    // Placeholder is a static container the same size as the dog image
+    var placeholder = Container(
+      width: 100.0,
+      height: 100.0,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.topRight,
+          colors: [Colors.black54, Colors.black, Colors.blueGrey[600]],
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text('DOGGO', textAlign: TextAlign.center),
+    );
+
+    // This is an animated widget built into Flutter
+    return AnimatedCrossFade(
+      // You pass it the starting widget and the ending widget
+      firstChild: placeholder,
+      secondChild: dogAvatar,
+      // Then you pass it a ternary that should be based on your state
+      //
+      // If renderUrl is null tell the widget to use the placeholder,
+      // otherwise use the dogAvatar
+      crossFadeState: renderUrl == null
+          ? CrossFadeState.showFirst
+          : CrossFadeState.showSecond,
+      // Finally, pass in the amount of time the fade should take
+      duration: Duration(milliseconds: 1000),
     );
   }
 
@@ -76,47 +127,17 @@ class _DogCardState extends State<DogCard> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Start with a container so we can add layout and style properties.
-    // InkWell is a special material widget that makes its children tapable and adds Material Design ink ripple when tapped
-    return InkWell(
-      // onTap is a callback that will be triggered when tapped
-      onTap: showDogDetailPage,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Container(
-          // Arbitrary number
-          height: 115.0,
-          child: Stack(
-            children: <Widget>[
-              // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
-              Positioned(
-                left: 50.0,
-                child: dogCard,
-              ),
-              Positioned(top: 7.5, child: dogImage),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   // This is the builder method that creates a new page
   showDogDetailPage() {
     // Navigator.of(context) accesses the current app¡s navigator
     // Navigators can 'push' new routes onto the stack
     // as well as pop routes off the stack
     // Easiest way and pass that page some state from the current page
-    Navigator.of(context).push(
-      MaterialPageRoute(
+    Navigator.of(context).push(MaterialPageRoute(
         // builder method always take context
         builder: (context) {
-          return DogDetailPage(dog);
-        }
-      )
-    );
+      return DogDetailPage(dog);
+    }));
 
     /*
     Flutter automatically adds a leading button to an AppBar, which pops a route off. 

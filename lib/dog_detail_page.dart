@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dog_model.dart';
+import 'package:flutter/scheduler.dart';
 
 class DogDetailPage extends StatefulWidget {
   final Dog dog;
@@ -18,35 +19,39 @@ class _DogDetailPageState extends State<DogDetailPage> {
 
   Widget get dogImage {
     // Container define the size of its children
-    return Container(
-      height: dogAvatarSize,
-      width: dogAvatarSize,
-      // Use Box Decoration to make the image a circle and add an arbitrary shadow for styling
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        // Like in CSS, you often want to add multiple BoxShadows for the right look so the Box Shadow property takes a list of BoxShadows
-        boxShadow: [
-          const BoxShadow(
-              // Just like CSS, it takes the same 4 properties
-              offset: const Offset(1.0, 2.0),
-              blurRadius: 2.0,
-              spreadRadius: -1.0,
-              color: const Color(0x33000000)),
-          const BoxShadow(
-              offset: const Offset(2.0, 1.0),
-              blurRadius: 3.0,
-              spreadRadius: 0.0,
-              color: const Color(0x24000000)),
-          const BoxShadow(
-              offset: const Offset(3.0, 1.0),
-              blurRadius: 4.0,
-              spreadRadius: 2.0,
-              color: const Color(0x1F000000)),
-        ],
-        // This is how you add an image to a Container's background
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(widget.dog.imageUrl),
+    return Hero(
+      // Destination tag: The same code, except the dog property lives on the widget in this file
+      tag: widget.dog,
+      child: Container(
+        height: dogAvatarSize,
+        width: dogAvatarSize,
+        // Use Box Decoration to make the image a circle and add an arbitrary shadow for styling
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          // Like in CSS, you often want to add multiple BoxShadows for the right look so the Box Shadow property takes a list of BoxShadows
+          boxShadow: [
+            const BoxShadow(
+                // Just like CSS, it takes the same 4 properties
+                offset: const Offset(1.0, 2.0),
+                blurRadius: 2.0,
+                spreadRadius: -1.0,
+                color: const Color(0x33000000)),
+            const BoxShadow(
+                offset: const Offset(2.0, 1.0),
+                blurRadius: 3.0,
+                spreadRadius: 0.0,
+                color: const Color(0x24000000)),
+            const BoxShadow(
+                offset: const Offset(3.0, 1.0),
+                blurRadius: 4.0,
+                spreadRadius: 2.0,
+                color: const Color(0x1F000000)),
+          ],
+          // This is how you add an image to a Container's background
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkImage(widget.dog.imageUrl),
+          ),
         ),
       ),
     );
@@ -112,6 +117,7 @@ class _DogDetailPageState extends State<DogDetailPage> {
   // Aside: It's often much easier to build UI if you break up your widgets the way I have in this file rather than have one massive build method
   @override
   Widget build(BuildContext context) {
+    timeDilation = 2.5;
     return Scaffold(
       backgroundColor: Colors.black87,
       appBar: AppBar(
@@ -184,6 +190,31 @@ class _DogDetailPageState extends State<DogDetailPage> {
   }
 
   void updateRating() {
-    setState(() => widget.dog.rating = _sliderValue.toInt());
+    if (_sliderValue < 10) {
+      _ratingErrorDialog();
+    } else {
+      setState(() => widget.dog.rating = _sliderValue.toInt());
+    }
+  }
+
+  // Just like a route, this need to be async, because it can return information when the user interacts
+  Future<Null> _ratingErrorDialog() async {
+    // showDialog is a built-in Flutter method
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error!'),
+            content: Text("They're good dogs!"),
+            // This action uses the Navigator to dismiss the dialog
+            // This is where you could return information if you wanted to
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Try again'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        });
   }
 }
