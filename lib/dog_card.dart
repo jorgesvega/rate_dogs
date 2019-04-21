@@ -8,34 +8,6 @@ NOTES
 Passing data to a Stateful Widget: https://stackoverflow.com/questions/50818770/passing-data-to-a-stateful-widget
 */
 
-@override
-Widget build(BuildContext context) {
-  timeDilation = 1.5;
-  // Start with a container so we can add layout and style properties.
-  // InkWell is a special material widget that makes its children tapable and adds Material Design ink ripple when tapped
-  return InkWell(
-    // onTap is a callback that will be triggered when tapped
-    onTap: showDogDetailPage,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        // Arbitrary number
-        height: 115.0,
-        child: Stack(
-          children: <Widget>[
-            // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
-            Positioned(
-              left: 50.0,
-              child: dogCard,
-            ),
-            Positioned(top: 7.5, child: dogImage),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
 class DogCard extends StatefulWidget {
   final Dog dog;
   DogCard(this.dog);
@@ -125,6 +97,34 @@ class _DogCardState extends State<DogCard> {
     setState(() {
       renderUrl = dog.imageUrl;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    timeDilation = 1.5;
+    // Start with a container so we can add layout and style properties.
+    // InkWell is a special material widget that makes its children tapable and adds Material Design ink ripple when tapped
+    return InkWell(
+      // onTap is a callback that will be triggered when tapped
+      onTap: showDogDetailPage,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Container(
+          // Arbitrary number
+          height: 115.0,
+          child: Stack(
+            children: <Widget>[
+              // Position our dog image, so we can explicitly place it. We'll place it after we've made the card.
+              Positioned(
+                left: 50.0,
+                child: dogCard,
+              ),
+              Positioned(top: 7.5, child: dogImage),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   // This is the builder method that creates a new page

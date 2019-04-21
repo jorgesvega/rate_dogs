@@ -17,6 +17,7 @@ class _AddDogFormPageState extends State<AddDogFormPage> {
     // First make sure there is some information in the form
     // A dog needs a name, but may be location independent,
     // so we'll only abandon the save if there's no name
+    // TODO: Replace with a builder
     if (nameController.text.isEmpty) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
